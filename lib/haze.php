@@ -53,7 +53,7 @@
 
 				//choose a random value from the flattened array and process
 				//it to remove spaces (if there are any)
-				$random_word = $flattened[rand(1, (sizeof($flattened)) - 1)];
+				$random_word = $flattened[rand(0, (sizeof($flattened) - 1))];
 				//$random_word = str_replace(" ", "", $random_word);
 
 				return $random_word;
@@ -73,7 +73,7 @@
 			$list->push($this->_getRandomWordFromPool());
 
 			$i = $list->length;
-			while($config["length"] > 0){
+			while($config["length"] > $i){
 				$this->_resetPool($list->indexOf($i));
 
 				$list->push($this->_getRandomWordFromPool());
