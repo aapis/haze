@@ -13,6 +13,6 @@
 
 	$password = new \Free\Haze($config);
 
-	echo sprintf("Your password is: <strong>%s</strong>", $password->toString());
+	echo sprintf("Your password is: <strong>%s</strong>", $password);
 
 ?>

@@ -11,22 +11,29 @@
 	include "api.php";
 
 	class Haze extends Generic {
-		protected $api;
-		protected $format = "json";
-
-		private $_pool;
+		private $_config;
+		private $_api;
+		private $_pool = array();
 		private $_password;
 
 		public function __construct($config = array()){
-			$this->api = new API();
+			//setup the configuration object
+			$this->_config = new Generic();
+			$this->_config->setProperties($config);
+			$this->_config->set("format", "json");
 
+			//get the API key and any other API info
+			$this->_api = new API();
+			//start with a pool based on a default keyword
 			$this->_pool = $this->_request();
 
-			return $this->_generatePassword($config);
+			$this->_generatePassword();
+
+			return $this->__toString();
 		}
 
 		private function _request($word = "free"){
-			$str = sprintf("https://words.bighugelabs.com/api/2/%s/%s/%s", $this->api->getKey(), $word, $this->format);
+			$str = sprintf("https://words.bighugelabs.com/api/2/%s/%s/%s", $this->_api->getKey(), $word, $this->_config->get("format"));
 
 			if($word != null){
 				$_request = file_get_contents($str);
@@ -62,32 +69,39 @@
 			return null;
 		}
 
+		/**
+		 * Reset the pool of words based on a "base" word
+		 * @param  string $base 
+		 * @return array
+		 */
 		private function _resetPool($base = "free"){
 			$this->_pool = $this->_request($base);
 
-			return $this;
+			return $this->_pool;
 		}
 
-		private function _generatePassword($config){
+		private function _generatePassword(){
 			$list = new GenericList();
 			$list->push($this->_getRandomWordFromPool());
 
 			$i = $list->length;
-			while($config["length"] > $i){
+			$len = $this->_config->get("length");
+			while($len > $i){
+				//base the next random word on the next item in the list
 				$this->_resetPool($list->indexOf($i));
 
 				$list->push($this->_getRandomWordFromPool());
 				
-				$config["length"]--;
+				$len--;
 				$i++;
 			}
 
-			$this->_password = $list->join($config["separator"], true);
+			$this->_password = $list->join($this->_config->get("separator"), true);
 
 			return $this->_password;
 		}
 
-		public function toString(){
+		public function __toString(){
 			return $this->_password;
 		}
 	}
