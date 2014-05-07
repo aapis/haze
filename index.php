@@ -7,7 +7,7 @@
 	}
 
 	$config = array(
-			"length"    => 3,     //1 less than the number of words you want the password to contain
+			"length"    => 3,     //the number of words you want the password to contain
 			"separator" => "-",    //a character to separate words with, empty string by default (i.e. thisismypassword)
 		);
 
